@@ -129,7 +129,9 @@ namespace YodaIM
                 endpoints.MapControllers();
             });
 
-            context.Database.Migrate();
+
+
+            context.Database.EnsureCreated();
         }
     }
 }

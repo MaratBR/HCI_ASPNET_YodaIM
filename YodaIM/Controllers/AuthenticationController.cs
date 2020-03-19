@@ -135,9 +135,10 @@ namespace YodaIM.Controllers
 
         [HttpGet("user")]
         [Authorize]
-        public IActionResult CurrentUser()
+        public async Task<IActionResult> CurrentUser()
         {
-            return Ok(User.Claims.ToList().Select(c => $"{c.Type} = {c.Value}"));
+            var user = await userManager.GetUserAsync(User);
+            return Ok(user);
         }
     }
 }

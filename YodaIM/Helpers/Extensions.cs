@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using YodaIM.Models;
 using YodaIM.Services;
@@ -31,5 +34,7 @@ namespace YodaIM.Helpers
         {
             return configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
         }
+
+        public static async Task<User> GetUserAsyncOrFail(this UserManager<User> manager, ClaimsPrincipal principal) => (await manager.GetUserAsync(principal)) ?? throw new ApplicationException("User hasn't been found in the database");
     }
 }
