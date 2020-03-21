@@ -16,7 +16,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using YodaIM.Chat;
 using YodaIM.Helpers;
 using YodaIM.Models;
 using YodaIM.Settings;
@@ -55,12 +54,26 @@ namespace YodaIM
             services.AddApplicationServices();
             services.AddDbContext<Context>(builder);
 
+
+            services
+                .AddIdentity<User, IdentityRole<int>>()
+                .AddEntityFrameworkStores<Context>()
+                .AddDefaultTokenProviders();
+
+            services.AddControllers();
+
+
             {
                 var section = Configuration.GetSection(nameof(JwtSettings));
                 var jwtSettings = section.Get<JwtSettings>();
 
                 services
-                    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddAuthentication(options =>
+                    {
+                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        //options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                        //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
                     .AddJwtBearer(x =>
                     {
                         x.IncludeErrorDetails = true;
@@ -82,14 +95,13 @@ namespace YodaIM
 
             services.AddAuthorization(auth =>
             {
-                auth.DefaultPolicy = new AuthorizationPolicyBuilder()
+                auth.AddPolicy("Bearer",
+                    new AuthorizationPolicyBuilder()
                         .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                         .RequireAuthenticatedUser()
-                        .Build();
+                        .Build()
+                    );
             });
-
-            services.AddControllers();
-            services.AddSignalR();
 
         }
 
@@ -114,7 +126,6 @@ namespace YodaIM
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<YODAChat>("/api/chat");
                 endpoints.MapControllers();
             });
 

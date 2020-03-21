@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace YodaIM.Models
 {
-    public class Context : AuthDbContext
+    public class Context : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Message> Messages { get; set; }
@@ -23,6 +23,10 @@ namespace YodaIM.Models
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<User>()
+                .HasIndex(u => u.UserName)
+                .IsUnique();
         }
     }
 }

@@ -21,9 +21,7 @@ namespace YodaIM.Helpers
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            return services
-                .AddScoped<ITokenService, TokenService>()
-                .AddScoped<IMessagesService, MessagesService>();
+            return services.AddScoped<ITokenService, TokenService>();
         }
 
 
