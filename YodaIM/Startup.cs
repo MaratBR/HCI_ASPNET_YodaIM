@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using YodaIM.Chat;
 using YodaIM.Helpers;
 using YodaIM.Models;
 using YodaIM.Settings;
@@ -53,12 +56,27 @@ namespace YodaIM
 
             services.AddApplicationServices();
             services.AddDbContext<Context>(builder);
+            services.AddSignalR();
 
 
             services
                 .AddIdentity<User, IdentityRole<int>>()
                 .AddEntityFrameworkStores<Context>()
                 .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Events = new CookieAuthenticationEvents
+                {
+                    OnRedirectToLogin =
+                        ctx =>
+                        {
+                            ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            return Task.FromResult(0);
+                        }
+                };
+
+            });
 
             services.AddControllers();
 
@@ -123,9 +141,11 @@ namespace YodaIM
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseWebSockets();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<YODAHub>("/api/chat");
                 endpoints.MapControllers();
             });
 

@@ -33,6 +33,8 @@ namespace YodaIM.Controllers
 
         [Required]
         public string PhoneNumber { get; set; }
+
+        public Gender? Gender { get; set; } = null;
     }
 
     public class AuthenticateRequest
@@ -80,8 +82,8 @@ namespace YodaIM.Controllers
                 {
                     UserName = request.UserName,
                     Email = request.Email,
-                    PhoneNumber = request.PhoneNumber
-
+                    PhoneNumber = request.PhoneNumber,
+                    Gender = request.Gender
                 };
                 var result = await userManager.CreateAsync(user, request.Password);
 
@@ -113,21 +115,26 @@ namespace YodaIM.Controllers
             }
 
             var user = await userManager.FindByUserNameOrEmail(request.Login);
-            var authenticationResult = signInManager.SignInAsync(
-                user,
-                false
-                );
 
-            if (authenticationResult.IsCompletedSuccessfully)
+            if (user != null)
             {
-                var token = tokenService.CreateIdentityToken(user);
-                var refreshTokenGuid = await tokenService.CreateRefreshToken(user);
+                var result = await signInManager.CheckPasswordSignInAsync(
+                user,
+                request.Password,
+                false
+             );
 
-                return new AuthenticateResponse
+                if (result.Succeeded)
                 {
-                    AccessToken = tokenService.Strigify(token),
-                    RefreshToken = refreshTokenGuid.ToString()
-                };
+                    var token = tokenService.CreateIdentityToken(user);
+                    var refreshTokenGuid = await tokenService.CreateRefreshToken(user);
+
+                    return new AuthenticateResponse
+                    {
+                        AccessToken = tokenService.Strigify(token),
+                        RefreshToken = refreshTokenGuid.ToString()
+                    };
+                }
             }
 
             return Unauthorized(new Error("Invalid credentials", "We haven't found a user which credentials match to yours"));

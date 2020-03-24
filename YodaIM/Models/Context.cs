@@ -13,7 +13,7 @@ namespace YodaIM.Models
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<File> Files { get; set; }
+        public DbSet<FileModel> Files { get; set; }
 
         public Context(DbContextOptions<Context> options)
             : base(options)
@@ -24,9 +24,17 @@ namespace YodaIM.Models
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<User>()
+            var user = builder.Entity<User>();
+            user
                 .HasIndex(u => u.UserName)
                 .IsUnique();
+
+            user
+                .Property(u => u.Gender)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (Gender)Enum.Parse(typeof(Gender), v)
+                );
         }
     }
 }

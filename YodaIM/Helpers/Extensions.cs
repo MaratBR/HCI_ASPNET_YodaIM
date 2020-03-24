@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using YodaIM.Chat;
 using YodaIM.Models;
 using YodaIM.Services;
 using YodaIM.Services.Database;
@@ -21,7 +22,11 @@ namespace YodaIM.Helpers
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            return services.AddScoped<ITokenService, TokenService>();
+            return services
+                .AddSingleton<IChatHandler, ChatHandler>()
+                .AddScoped<ITokenService, TokenService>()
+                .AddScoped<IMessageService, MessageService>()
+                .AddScoped<IRoomService, RoomService>();
         }
 
 

@@ -10,10 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YodaIM.Helpers;
 using YodaIM.Models;
+using YodaIM.Services;
 
 namespace YodaIM.Controllers
 {
-    public class CreateRoomRequest
+    public class CreateRoomRequest : IRoomInfo
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -24,39 +25,37 @@ namespace YodaIM.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly UserManager<User> userManager;
-        private readonly Context context;
-        public RoomsController(UserManager<User> userManager, Context context)
+        private readonly IRoomService roomService;
+
+        public RoomsController(UserManager<User> userManager, IRoomService roomService)
         {
             this.userManager = userManager;
-            this.context = context;
+            this.roomService = roomService;
         }
 
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<Room>> Create([FromBody] CreateRoomRequest request)
         {
-            var user = await userManager.GetUserAsyncOrFail(User);
+            var room = await roomService.CreateRoom(request);
 
-            var room = new Room
-            {
-                Name = request.Name,
-                Founder = user,
-                Description = request.Description
-            };
-            context.Rooms.Add(room);
-            await context.SaveChangesAsync();
-
-            return room;
+            return Created($"/api/room/{room.Id}", room);
         }
 
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<dynamic>> List()
         {
+            var user = await userManager.GetUserAsyncOrFail(User);
+            var rooms = await roomService.ListRooms(user);
             return new
             {
-                rooms = await context.Rooms.ToListAsync()
+                rooms = rooms
             };
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Room>> GetRoom([FromRoute] int id)
+            => await roomService.GetById(id);
     }
 }

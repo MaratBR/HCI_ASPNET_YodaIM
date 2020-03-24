@@ -338,3 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# SQLITE database files
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
