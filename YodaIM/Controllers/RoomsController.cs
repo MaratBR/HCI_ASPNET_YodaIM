@@ -55,7 +55,7 @@ namespace YodaIM.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Room>> GetRoom([FromRoute] int id)
+        public async Task<ActionResult<Room>> GetRoom([FromRoute] Guid id)
             => await roomService.GetById(id);
     }
 }

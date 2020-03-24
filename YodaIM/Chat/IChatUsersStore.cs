@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -15,13 +16,13 @@ namespace YodaIM.Chat
 
         User User([NotNull] string connectionId);
 
-        ICollection<int> GetRoomIds([NotNull] string connectionId);
+        ICollection<Guid> GetRoomIds([NotNull] string connectionId);
 
-        bool InRoom([NotNull] string connectionId, int roomId);
+        bool InRoom([NotNull] string connectionId, Guid roomId);
 
-        Result AddRoom([NotNull] string connectionId, int roomId);
+        Result AddRoom([NotNull] string connectionId, Guid roomId);
 
-        Result RemoveRoom([NotNull] string connectionId, int roomId);
+        Result RemoveRoom([NotNull] string connectionId, Guid roomId);
     }
 
     class ChatUser
@@ -41,9 +42,9 @@ namespace YodaIM.Chat
 
     class ChatHandler : IChatHandler
     {
-        private Dictionary<string, int> connectionUsers = new Dictionary<string, int>();
-        private Dictionary<string, HashSet<int>> connectionRooms = new Dictionary<string, HashSet<int>>();
-        private Dictionary<int, ChatUser> users = new Dictionary<int, ChatUser>();
+        private Dictionary<string, Guid> connectionUsers = new Dictionary<string, Guid>();
+        private Dictionary<string, HashSet<Guid>> connectionRooms = new Dictionary<string, HashSet<Guid>>();
+        private Dictionary<Guid, ChatUser> users = new Dictionary<Guid, ChatUser>();
         private object _lock = new object();
 
         public Result AddConnection([NotNull] string connectionId, [NotNull] User user)
@@ -63,12 +64,12 @@ namespace YodaIM.Chat
             }
             connectionUsers[connectionId] = user.Id;
             users[user.Id].IncrementConnections();
-            connectionRooms[connectionId] = new HashSet<int>();
+            connectionRooms[connectionId] = new HashSet<Guid>();
 
             return Results.Ok();
         }
 
-        public Result AddRoom([NotNull] string connectionId, int roomId)
+        public Result AddRoom([NotNull] string connectionId, Guid roomId)
         {
             if (connectionRooms.ContainsKey(connectionId))
             {
@@ -78,7 +79,7 @@ namespace YodaIM.Chat
             return Results.Fail("Connection " + connectionId + " not found");
         }
 
-        public ICollection<int> GetRoomIds([NotNull] string connectionId)
+        public ICollection<Guid> GetRoomIds([NotNull] string connectionId)
         {
             if (connectionRooms.ContainsKey(connectionId))
                 return connectionRooms[connectionId];
@@ -86,13 +87,13 @@ namespace YodaIM.Chat
             throw new KeyNotFoundException("No rooms found for connection ID = " + connectionId);
         }
 
-        public bool InRoom([NotNull] string connectionId, int roomId) => connectionRooms.ContainsKey(connectionId) && connectionRooms[connectionId].Contains(roomId);
+        public bool InRoom([NotNull] string connectionId, Guid roomId) => connectionRooms.ContainsKey(connectionId) && connectionRooms[connectionId].Contains(roomId);
 
         public Result RemoveConnection([NotNull] string connectionId)
         {
             if (!connectionUsers.ContainsKey(connectionId))
                 return Results.Fail("Connection not found");
-            int userId = connectionUsers[connectionId];
+            Guid userId = connectionUsers[connectionId];
             connectionUsers.Remove(connectionId);
             connectionRooms.Remove(connectionId);
 
@@ -108,7 +109,7 @@ namespace YodaIM.Chat
             return Results.Ok();
         }
 
-        public Result RemoveRoom([NotNull] string connectionId, int roomId)
+        public Result RemoveRoom([NotNull] string connectionId, Guid roomId)
         {
             if (connectionRooms.ContainsKey(connectionId))
             {
@@ -123,7 +124,7 @@ namespace YodaIM.Chat
             if (!connectionUsers.ContainsKey(connectionId))
                 return null;
 
-            int id = connectionUsers[connectionId];
+            Guid id = connectionUsers[connectionId];
 
             return users[id].User;
         }

@@ -16,12 +16,12 @@ namespace YodaIM.Services
 
     public interface IRoomService
     {
-        Task<Room> GetById(int id);
+        Task<Room> GetById(Guid id);
 
         Task<Room> CreateRoom(IRoomInfo info);
 
         Task<ICollection<Room>> ListRooms(User user);
 
-        Task<bool> Exists(int id);
+        Task<bool> Exists(Guid id);
     }
 }

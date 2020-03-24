@@ -18,7 +18,7 @@ namespace YodaIM.Models
 	}
 
 
-	public class User : IdentityUser<int>
+	public class User : IdentityUser<Guid>
     {
         public string Alias { get; set; }
 

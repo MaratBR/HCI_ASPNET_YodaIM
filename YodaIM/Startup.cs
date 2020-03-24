@@ -60,7 +60,7 @@ namespace YodaIM
 
 
             services
-                .AddIdentity<User, IdentityRole<int>>()
+                .AddIdentity<User, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<Context>()
                 .AddDefaultTokenProviders();
 

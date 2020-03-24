@@ -63,7 +63,7 @@ namespace YodaIM.Chat
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task Send(string text, int roomId)
+        public async Task Send(string text, Guid roomId)
         {
             if (_chatHandler.InRoom(Context.ConnectionId, roomId))
             {
@@ -73,7 +73,7 @@ namespace YodaIM.Chat
             }
         }
 
-        public async Task JoinRoom(int roomId)
+        public async Task JoinRoom(Guid roomId)
         {
             if (_chatHandler.InRoom(Context.ConnectionId, roomId))
             {
@@ -89,7 +89,7 @@ namespace YodaIM.Chat
             }
         }
 
-        public async Task LeaveRoom(int roomId)
+        public async Task LeaveRoom(Guid roomId)
         {
             if (!_chatHandler.InRoom(Context.ConnectionId, roomId))
             {
@@ -104,12 +104,12 @@ namespace YodaIM.Chat
 
         private void Disconnect() => Context.GetHttpContext().Abort();
 
-        private async Task SendUserJoinedMessage(int userId, int roomId) => await Clients.Group(RoomGroup(roomId)).SendAsync("Joined", userId, roomId);
+        private async Task SendUserJoinedMessage(Guid userId, Guid roomId) => await Clients.Group(RoomGroup(roomId)).SendAsync("Joined", userId, roomId);
 
-        private async Task SendUserLeftMessage(int userId, int roomId) => await Clients.Group(RoomGroup(roomId)).SendAsync("Left", userId, roomId);
+        private async Task SendUserLeftMessage(Guid userId, Guid roomId) => await Clients.Group(RoomGroup(roomId)).SendAsync("Left", userId, roomId);
 
-        private async Task SendTextMessage(int userId, int roomId, string text) => await Clients.Group(RoomGroup(roomId)).SendAsync("Text", text, roomId, userId);
+        private async Task SendTextMessage(Guid userId, Guid roomId, string text) => await Clients.Group(RoomGroup(roomId)).SendAsync("Text", text, roomId, userId);
 
-        private string RoomGroup(int id) => id.ToString();
+        private string RoomGroup(Guid id) => id.ToString();
     }
 }

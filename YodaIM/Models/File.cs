@@ -16,7 +16,7 @@ namespace YodaIM.Models
     [Table("File")]
     public class FileModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [MaxLength(255)] [Required]
         public string FileName { get; set; }

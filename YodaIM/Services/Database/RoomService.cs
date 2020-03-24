@@ -27,9 +27,9 @@ namespace YodaIM.Services.Database
             return room;
         }
 
-        public Task<bool> Exists(int id) => context.Rooms.Where(r => r.Id == id).AnyAsync();
+        public Task<bool> Exists(Guid id) => context.Rooms.Where(r => r.Id == id).AnyAsync();
 
-        public Task<Room> GetById(int id) => context.Rooms.Where(r => r.Id == id).SingleOrDefaultAsync();
+        public Task<Room> GetById(Guid id) => context.Rooms.Where(r => r.Id == id).SingleOrDefaultAsync();
 
         public async Task<ICollection<Room>> ListRooms(User user) => await context.Rooms.ToListAsync();
     }

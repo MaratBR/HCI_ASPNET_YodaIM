@@ -17,7 +17,7 @@ namespace YodaIM.Services.Database
             _roomService = roomService;
         }
 
-        public async Task<Result<Message>> CreateMessage(User sender, int roomId, string text)
+        public async Task<Result<Message>> CreateMessage(User sender, Guid roomId, string text)
         {
             if (!await _roomService.Exists(roomId))
                 return Results.Fail<Message>($"Room with ID = {roomId} not found");
@@ -41,7 +41,7 @@ namespace YodaIM.Services.Database
             return Results.Ok<Message>(message);
         }
 
-        public async Task<Result<Message>> CreateMessage(User sender, int roomId, FileModel file)
+        public async Task<Result<Message>> CreateMessage(User sender, Guid roomId, FileModel file)
         {
             if (!await _roomService.Exists(roomId))
                 return Results.Fail<Message>($"Room with ID = {roomId} not found");
