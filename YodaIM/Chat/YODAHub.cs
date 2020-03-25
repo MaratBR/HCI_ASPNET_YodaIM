@@ -69,7 +69,7 @@ namespace YodaIM.Chat
             {
                 var user = _chatHandler.User(Context.ConnectionId);
                 var message = await _messageService.CreateMessage(user, roomId, text);
-                await SendTextMessage(user.Id, roomId, message.Value.Text);
+                await SendMessage(message.Value);
             }
         }
 
@@ -108,7 +108,7 @@ namespace YodaIM.Chat
 
         private async Task SendUserLeftMessage(Guid userId, Guid roomId) => await Clients.Group(RoomGroup(roomId)).SendAsync("Left", userId, roomId);
 
-        private async Task SendTextMessage(Guid userId, Guid roomId, string text) => await Clients.Group(RoomGroup(roomId)).SendAsync("Text", text, roomId, userId);
+        private async Task SendMessage(Message message) => await Clients.Group(RoomGroup(message.RoomId)).SendAsync("Message", message);
 
         private string RoomGroup(Guid id) => id.ToString();
     }

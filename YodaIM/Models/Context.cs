@@ -35,6 +35,10 @@ namespace YodaIM.Models
                     v => v.ToString(),
                     v => (Gender)Enum.Parse(typeof(Gender), v)
                 );
+
+            builder.Entity<FileModel>()
+                .Property(fm => fm.Sha256)
+                .HasColumnType("BINARY(32)");
         }
     }
 }

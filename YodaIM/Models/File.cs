@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace YodaIM.Models
@@ -27,11 +28,16 @@ namespace YodaIM.Models
         [Required]
         public FileType Type { get; set; }
 
-        [Required] [MaxLength(1024 * 1024 * 10)]
+        [Required] [MaxLength(1024 * 1024 * 10)] [JsonIgnore]
         public byte[] Data { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public byte[] Sha256 { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
+
+        [JsonIgnore]
         public virtual User User { get; set; }
 
     }

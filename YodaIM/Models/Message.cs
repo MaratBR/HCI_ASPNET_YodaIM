@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace YodaIM.Models
@@ -16,8 +17,13 @@ namespace YodaIM.Models
 
         public Guid? FileId { get; set; }
 
+        [JsonIgnore]
         public virtual User Sender { get; set; }
+
+        [JsonIgnore]
         public virtual Room Room { get; set; }
+
+        [JsonIgnore]
         public virtual FileModel File { get; set; }
     }
 }

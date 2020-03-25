@@ -26,6 +26,7 @@ namespace YodaIM.Helpers
                 .AddSingleton<IChatHandler, ChatHandler>()
                 .AddScoped<ITokenService, TokenService>()
                 .AddScoped<IMessageService, MessageService>()
+                .AddScoped<IFileService, FileService>()
                 .AddScoped<IRoomService, RoomService>();
         }
 
