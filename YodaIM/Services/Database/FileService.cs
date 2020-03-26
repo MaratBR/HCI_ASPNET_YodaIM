@@ -44,8 +44,11 @@ namespace YodaIM.Services.Database
                 ContentType = contentType,
                 UserId = user.Id,
                 Type = fileType,
-                Data = buffer,
-                Sha256 = SHA256.Create().ComputeHash(buffer)
+                BinaryBlob = new BinaryBlob
+                {
+                    Data = buffer,
+                    Sha256 = SHA256.Create().ComputeHash(buffer)
+                }
             };
             context.Files.Add(fileModel);
             await context.SaveChangesAsync();

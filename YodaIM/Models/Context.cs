@@ -14,6 +14,7 @@ namespace YodaIM.Models
         public DbSet<Message> Messages { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<FileModel> Files { get; set; }
+        public DbSet<BinaryBlob> BinaryBlobs { get; set; }
 
         public Context(DbContextOptions<Context> options)
             : base(options)

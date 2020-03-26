@@ -81,7 +81,7 @@ namespace YodaIM.Controllers
             Response.Headers.Add("File-Id", file.Id.ToString());
             Response.Headers.Add("File-UploaderId", file.UserId.ToString());
 
-            return File(file.Data, file.ContentType);
+            return File(file.BinaryBlob.Data, file.ContentType);
         }
 
     }

@@ -28,14 +28,14 @@ namespace YodaIM.Models
         [Required]
         public FileType Type { get; set; }
 
-        [Required] [MaxLength(1024 * 1024 * 10)] [JsonIgnore]
-        public byte[] Data { get; set; }
-
-        [Required]
-        public byte[] Sha256 { get; set; }
-
         [Required]
         public Guid UserId { get; set; }
+
+        [Required]
+        public Guid BinaryBlobId { get; set; }
+
+        [JsonIgnore]
+        public virtual BinaryBlob BinaryBlob { get; set; }
 
         [JsonIgnore]
         public virtual User User { get; set; }
