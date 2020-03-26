@@ -13,6 +13,8 @@ namespace YodaIM.Services
 
         Task<FileModel> Get(Guid id);
 
+        Task<FileModel> GetWithData(Guid id);
+
         Task<ICollection<FileModel>> GetAll(ICollection<Guid> ids);
     }
 }

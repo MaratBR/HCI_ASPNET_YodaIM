@@ -48,6 +48,7 @@ namespace YodaIM.Controllers
         {
             var user = await userManager.GetUserAsyncOrFail(User);
             var rooms = await roomService.ListRooms(user);
+            
             return new
             {
                 rooms = rooms

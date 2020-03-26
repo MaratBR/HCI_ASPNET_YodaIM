@@ -144,7 +144,7 @@ namespace YodaIM.Controllers
         [Authorize]
         public async Task<IActionResult> CurrentUser()
         {
-            var user = await userManager.GetUserAsync(User);
+            var user = await userManager.GetUserAsyncOrFail(User);
             return Ok(user);
         }
     }

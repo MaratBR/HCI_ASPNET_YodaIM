@@ -14,7 +14,6 @@ namespace YodaIM.Models
         Avatar
     };
 
-    [Table("File")]
     public class FileModel
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -35,13 +34,12 @@ namespace YodaIM.Models
         public Guid BinaryBlobId { get; set; }
 
         [JsonIgnore]
-        public virtual BinaryBlob BinaryBlob { get; set; }
+        public BinaryBlob BinaryBlob { get; set; }
 
-        [JsonIgnore]
         public virtual User User { get; set; }
 
         [JsonIgnore]
-        public virtual List<MessageAttachment> MessageAttachments { get; set; }
+        public List<MessageAttachment> MessageAttachments { get; set; }
 
     }
 }

@@ -22,14 +22,22 @@ namespace YodaIM.Services.Database
 
         public Task<FileModel> Get(Guid id)
         {
-            return context.Files
+            return context.FileModels
                 .Where(f => f.Id == id)
                 .SingleOrDefaultAsync();
         }
 
         public async Task<ICollection<FileModel>> GetAll(ICollection<Guid> ids)
         {
-            return await context.Files.Where(fm => ids.Contains(fm.Id)).ToListAsync();
+            return await context.FileModels.Where(fm => ids.Contains(fm.Id)).ToListAsync();
+        }
+
+        public Task<FileModel> GetWithData(Guid id)
+        {
+            return context.FileModels
+                .Where(f => f.Id == id)
+                .Include(f => f.BinaryBlob)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<FileModel> Upload(IFormFile file, User user, FileType fileType)
@@ -55,7 +63,7 @@ namespace YodaIM.Services.Database
                     Sha256 = SHA256.Create().ComputeHash(buffer)
                 }
             };
-            context.Files.Add(fileModel);
+            context.FileModels.Add(fileModel);
             await context.SaveChangesAsync();
             return fileModel;
         }

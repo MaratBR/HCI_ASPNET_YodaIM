@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using YodaIM.Helpers;
 using YodaIM.Models;
 using YodaIM.Services;
 
@@ -42,7 +43,7 @@ namespace YodaIM.Controllers
 
             if (file.Length > 0 && file.Length < 1024 * 1024 * 1024)
             {
-                return await _fileService.Upload(file, await userManager.GetUserAsync(User), FileType.Generic);
+                return await _fileService.Upload(file, await userManager.GetUserAsyncOrFail(User), FileType.Generic);
             }
             else
             {
@@ -70,7 +71,7 @@ namespace YodaIM.Controllers
         [Authorize]
         public async Task<ActionResult> DownloadFile([FromRoute] Guid id)
         {
-            var file = await _fileService.Get(id);
+            var file = await _fileService.GetWithData(id);
 
             if (file == null)
             {
@@ -80,6 +81,7 @@ namespace YodaIM.Controllers
             Response.Headers.Add("Content-Disposition", "filename=" + file.FileName);
             Response.Headers.Add("File-Id", file.Id.ToString());
             Response.Headers.Add("File-UploaderId", file.UserId.ToString());
+            Response.Headers.Add("File-SHA256", Convert.ToBase64String(file.BinaryBlob.Sha256));
 
             return File(file.BinaryBlob.Data, file.ContentType);
         }

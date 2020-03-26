@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YodaIM.Chat.DTO;
+using YodaIM.Helpers;
 using YodaIM.Models;
 using YodaIM.Services;
 
@@ -37,7 +38,7 @@ namespace YodaIM.Chat
         {
             await base.OnConnectedAsync();
 
-            var user = await _userManager.GetUserAsync(Context.User);
+            var user = await _userManager.GetUserAsyncOrFail(Context.User);
 
             if (user == null)
             {

@@ -14,7 +14,7 @@ namespace YodaIM.Models
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageAttachment> MessageAttachments { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<FileModel> Files { get; set; }
+        public DbSet<FileModel> FileModels { get; set; }
         public DbSet<BinaryBlob> BinaryBlobs { get; set; }
 
         public Context(DbContextOptions<Context> options)
@@ -41,6 +41,10 @@ namespace YodaIM.Models
             builder.Entity<BinaryBlob>()
                 .Property(fm => fm.Sha256)
                 .HasColumnType("BINARY(32)");
+
+            builder.Entity<MessageAttachment>()
+                .HasKey(nameof(MessageAttachment.FileModelId), nameof(MessageAttachment.MessageId));
+
 
             builder.Entity<MessageAttachment>()
                .HasOne(a => a.Message)

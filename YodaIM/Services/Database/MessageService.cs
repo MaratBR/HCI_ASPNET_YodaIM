@@ -28,13 +28,17 @@ namespace YodaIM.Services.Database
                 RoomId = roomId,
                 Text = text
             };
-            message.MessageAttachments = attachments.Select(
+            if (attachments != null)
+            {
+                message.MessageAttachments = attachments.Select(
                 fm => new MessageAttachment
                 {
                     Message = message,
                     FileModelId = fm.Id
                 }
                 ).ToList();
+            }
+
             context.Messages.Add(message);
             try
             {
