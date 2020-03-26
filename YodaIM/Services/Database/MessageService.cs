@@ -17,7 +17,7 @@ namespace YodaIM.Services.Database
             _roomService = roomService;
         }
 
-        public async Task<Result<Message>> CreateMessage(User sender, Guid roomId, string text)
+        public async Task<Result<Message>> CreateMessage(User sender, Guid roomId, string text, IEnumerable<FileModel> attachments = null)
         {
             if (!await _roomService.Exists(roomId))
                 return Results.Fail<Message>($"Room with ID = {roomId} not found");
@@ -28,36 +28,19 @@ namespace YodaIM.Services.Database
                 RoomId = roomId,
                 Text = text
             };
+            message.MessageAttachments = attachments.Select(
+                fm => new MessageAttachment
+                {
+                    Message = message,
+                    FileModelId = fm.Id
+                }
+                ).ToList();
             context.Messages.Add(message);
             try
             {
                 await context.SaveChangesAsync();
             }
             catch(DbUpdateException exc)
-            {
-                return Results.Fail<Message>("Failed to save the message: " + exc.Message);
-            }
-
-            return Results.Ok<Message>(message);
-        }
-
-        public async Task<Result<Message>> CreateMessage(User sender, Guid roomId, FileModel file)
-        {
-            if (!await _roomService.Exists(roomId))
-                return Results.Fail<Message>($"Room with ID = {roomId} not found");
-
-            var message = new Message
-            {
-                Sender = sender,
-                RoomId = roomId,
-                File = file
-            };
-            context.Messages.Add(message);
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateException exc)
             {
                 return Results.Fail<Message>("Failed to save the message: " + exc.Message);
             }

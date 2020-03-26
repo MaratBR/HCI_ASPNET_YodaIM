@@ -40,5 +40,8 @@ namespace YodaIM.Models
         [JsonIgnore]
         public virtual User User { get; set; }
 
+        [JsonIgnore]
+        public virtual List<MessageAttachment> MessageAttachments { get; set; }
+
     }
 }

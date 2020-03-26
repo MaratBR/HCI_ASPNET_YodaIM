@@ -15,8 +15,6 @@ namespace YodaIM.Models
         public Guid SenderId { get; set; }
         public Guid RoomId { get; set; }
 
-        public Guid? FileId { get; set; }
-
         [JsonIgnore]
         public virtual User Sender { get; set; }
 
@@ -24,6 +22,6 @@ namespace YodaIM.Models
         public virtual Room Room { get; set; }
 
         [JsonIgnore]
-        public virtual FileModel File { get; set; }
+        public virtual List<MessageAttachment> MessageAttachments { get; set; }
     }
 }
