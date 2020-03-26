@@ -17,7 +17,7 @@ namespace YodaIM.Services.Database
             _roomService = roomService;
         }
 
-        public async Task<Result<Message>> CreateMessage(User sender, Guid roomId, string text, IEnumerable<FileModel> attachments = null)
+        public async Task<Result<Message>> CreateMessage(User sender, Guid roomId, string text, ICollection<FileModel> attachments = null)
         {
             if (!await _roomService.Exists(roomId))
                 return Results.Fail<Message>($"Room with ID = {roomId} not found");

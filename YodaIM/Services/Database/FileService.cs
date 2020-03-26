@@ -27,6 +27,11 @@ namespace YodaIM.Services.Database
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<ICollection<FileModel>> GetAll(ICollection<Guid> ids)
+        {
+            return await context.Files.Where(fm => ids.Contains(fm.Id)).ToListAsync();
+        }
+
         public async Task<FileModel> Upload(IFormFile file, User user, FileType fileType)
         {
             var fileName = file.FileName.Trim(TRIM_CHARS);

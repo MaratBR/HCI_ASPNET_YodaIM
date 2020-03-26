@@ -12,5 +12,7 @@ namespace YodaIM.Services
         Task<FileModel> Upload(IFormFile file, User user, FileType fileType);
 
         Task<FileModel> Get(Guid id);
+
+        Task<ICollection<FileModel>> GetAll(ICollection<Guid> ids);
     }
 }

@@ -15,6 +15,8 @@ namespace YodaIM.Models
         public Guid SenderId { get; set; }
         public Guid RoomId { get; set; }
 
+        public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
+
         [JsonIgnore]
         public virtual User Sender { get; set; }
 

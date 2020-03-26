@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using YodaIM.Chat.DTO;
 using YodaIM.Models;
 using YodaIM.Services;
 
@@ -15,18 +16,21 @@ namespace YodaIM.Chat
     {
         private readonly IChatHandler _chatHandler;
         private readonly IRoomService _roomService;
+        private readonly IFileService _fileService;
         private readonly IMessageService _messageService;
         private readonly UserManager<User> _userManager;
 
         public YODAHub(IChatHandler chatHandler,
             IRoomService roomService,
             IMessageService messageService,
+            IFileService fileService,
             UserManager<User> userManager)
         {
             _chatHandler = chatHandler;
             _roomService = roomService;
             _userManager = userManager;
             _messageService = messageService;
+            _fileService = fileService;
         }
 
         public override async Task OnConnectedAsync()
@@ -73,6 +77,17 @@ namespace YodaIM.Chat
             }
         }
 
+        public async Task SendWithAttachments(string text, Guid roomId, List<Guid> attachments)
+        {
+            if (_chatHandler.InRoom(Context.ConnectionId, roomId))
+            {
+                var user = _chatHandler.User(Context.ConnectionId);
+                var attachmentsModels = await _fileService.GetAll(attachments);
+                var message = await _messageService.CreateMessage(user, roomId, text, attachmentsModels);
+                await SendMessage(message.Value);
+            }
+        }
+
         public async Task JoinRoom(Guid roomId)
         {
             if (_chatHandler.InRoom(Context.ConnectionId, roomId))
@@ -108,7 +123,7 @@ namespace YodaIM.Chat
 
         private async Task SendUserLeftMessage(Guid userId, Guid roomId) => await Clients.Group(RoomGroup(roomId)).SendAsync("Left", userId, roomId);
 
-        private async Task SendMessage(Message message) => await Clients.Group(RoomGroup(message.RoomId)).SendAsync("Message", message);
+        private async Task SendMessage(Message message) => await Clients.Group(RoomGroup(message.RoomId)).SendAsync("Message", new ChatMessage(message));
 
         private string RoomGroup(Guid id) => id.ToString();
     }

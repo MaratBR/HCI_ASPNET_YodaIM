@@ -9,6 +9,6 @@ namespace YodaIM.Services
 {
     public interface IMessageService
     {
-        public Task<Result<Message>> CreateMessage(User sender, Guid roomId, string text, IEnumerable<FileModel> attachments = null);
+        public Task<Result<Message>> CreateMessage(User sender, Guid roomId, string text, ICollection<FileModel> attachments = null);
     }
 }
