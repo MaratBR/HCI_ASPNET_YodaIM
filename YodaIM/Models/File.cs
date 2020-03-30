@@ -33,6 +33,9 @@ namespace YodaIM.Models
         [Required]
         public Guid BinaryBlobId { get; set; }
 
+        [Required]
+        public int Size { get; set; }
+
         [JsonIgnore]
         public BinaryBlob BinaryBlob { get; set; }
 

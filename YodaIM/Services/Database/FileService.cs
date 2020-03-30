@@ -57,6 +57,7 @@ namespace YodaIM.Services.Database
                 ContentType = contentType,
                 UserId = user.Id,
                 Type = fileType,
+                Size = (int)file.Length,
                 BinaryBlob = new BinaryBlob
                 {
                     Data = buffer,
