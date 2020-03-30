@@ -49,7 +49,7 @@ namespace YodaIM.Services.Security
 
         public async Task<Guid> CreateRefreshToken(User user)
         {
-            var refreshToken = new RefreshToken(user, TimeSpan.FromDays(30));
+            var refreshToken = new RefreshToken(user, TimeSpan.FromDays(configuration.GetJwtConfiguration().RefreshLifetime));
             context.RefreshTokens.Add(refreshToken);
             await context.SaveChangesAsync();
             return refreshToken.Id;
