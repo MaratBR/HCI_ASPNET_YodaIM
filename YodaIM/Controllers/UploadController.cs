@@ -47,8 +47,7 @@ namespace YodaIM.Controllers
             }
             else
             {
-                ModelState.AddModelError("file", "Too big, at most 1M");
-                return BadRequest();
+                return StatusCode(413);
             }
 
         }

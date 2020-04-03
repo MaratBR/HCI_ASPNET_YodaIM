@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -68,6 +69,30 @@ namespace YodaIM.Chat
             await base.OnDisconnectedAsync(exception);
         }
 
+        public async Task Send(ChatMessageRequestDto messageDto)
+        {
+            if (_chatHandler.InRoom(Context.ConnectionId, messageDto.RoomId))
+            {
+                List<Guid> attachments;
+                var user = _chatHandler.User(Context.ConnectionId);
+                Result<Message> message;
+                if (messageDto.Attachments.Count() == 0)
+                {
+                    message = await _messageService.CreateMessage(user, messageDto.RoomId, messageDto.Text);
+                    attachments = new List<Guid>();
+                }
+                else
+                {
+                    var attachmentModels = await _fileService.GetAll(messageDto.Attachments);
+                    attachments = attachmentModels.Select(a => a.Id).ToList();
+                    message = await _messageService.CreateMessage(user, messageDto.RoomId, messageDto.Text, attachmentModels);
+                }
+                await SendMessage(message.Value, attachments, messageDto.Stamp);
+            }
+        }
+
+
+        [Obsolete]
         public async Task Send(string text, Guid roomId)
         {
             if (_chatHandler.InRoom(Context.ConnectionId, roomId))
@@ -78,6 +103,7 @@ namespace YodaIM.Chat
             }
         }
 
+        [Obsolete]
         public async Task SendWithAttachments(string text, Guid roomId, List<Guid> attachments)
         {
             if (_chatHandler.InRoom(Context.ConnectionId, roomId))
@@ -120,11 +146,47 @@ namespace YodaIM.Chat
 
         private void Disconnect() => Context.GetHttpContext().Abort();
 
-        private async Task SendUserJoinedMessage(Guid userId, Guid roomId) => await Clients.Group(RoomGroup(roomId)).SendAsync("Joined", userId, roomId);
+        private async Task SendUserJoinedMessage(Guid userId, Guid roomId)
+        {
+            // TODO Remove next statement (obsolete)
+            await Clients
+                .Group(RoomGroup(roomId))
+                .SendAsync("Joined", userId, roomId);
 
-        private async Task SendUserLeftMessage(Guid userId, Guid roomId) => await Clients.Group(RoomGroup(roomId)).SendAsync("Left", userId, roomId);
+            await SendUserActionMessage(userId, roomId, UserActionType.Joined);
+        }
 
-        private async Task SendMessage(Message message) => await Clients.Group(RoomGroup(message.RoomId)).SendAsync("Message", new ChatMessage(message));
+        private async Task SendUserLeftMessage(Guid userId, Guid roomId)
+        {
+            // TODO Remove next statement (obsolete)
+            await Clients
+                .Group(RoomGroup(roomId))
+                .SendAsync("Left", userId, roomId);
+
+
+            await SendUserActionMessage(userId, roomId, UserActionType.Left);
+        }
+
+        private Task SendUserActionMessage(Guid userId, Guid roomId, UserActionType type)
+        {
+            var dto = Dto.CreateUserAction(userId, roomId, type);
+            return Clients
+                .Group(RoomGroup(roomId))
+                .SendAsync("UserAction", dto);
+        }
+
+        [Obsolete]
+        private async Task SendMessage(Message message) => await Clients.Group(RoomGroup(message.RoomId)).SendAsync("Message", new OldChatMessageDto(message));
+
+        private async Task SendMessage(Message message, List<Guid> attachments, Guid stamp)
+        {
+            var dto = Dto.CreateMessage(message, attachments);
+            var ack = Dto.CreateMessageAck(message, stamp);
+            await Task.WhenAll(
+                Clients.OthersInGroup(RoomGroup(message.RoomId)).SendAsync("NewMessage", dto),
+                Clients.Caller.SendAsync("MessageAck", ack)
+                );
+        }
 
         private string RoomGroup(Guid id) => id.ToString();
     }

@@ -6,18 +6,19 @@ using YodaIM.Models;
 
 namespace YodaIM.Chat.DTO
 {
-    public class ChatMessage
+    [Obsolete]
+    public class OldChatMessageDto
     {
         private readonly Message message;
 
         public long Id => message.Id;
         public string Text => message.Text;
         public DateTime PublishedAt => message.PublishedAt;
-        public IEnumerable<Guid> Attachments => message.MessageAttachments?.Select(a => a.FileModelId) ?? new List<Guid>();
+        public ICollection<Guid> Attachments => message.MessageAttachments?.Select(a => a.FileModelId).ToList() ?? new List<Guid>();
         public Guid SenderId => message.SenderId;
         public Guid RoomId => message.RoomId;
 
-        public ChatMessage(Message message)
+        public OldChatMessageDto(Message message)
         {
             this.message = message;
         }
