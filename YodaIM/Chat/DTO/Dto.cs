@@ -13,7 +13,8 @@ namespace YodaIM.Chat.DTO
             Text = message.Text,
             SenderId = message.SenderId,
             Id = message.Id,
-            Attachments = attachments
+            Attachments = attachments,
+            RoomId = message.RoomId
         };
 
         public static MessageAckDto CreateMessageAck(Message message, Guid stamp) => new MessageAckDto
