@@ -16,5 +16,7 @@ namespace YodaIM.Chat.DTO
         public Guid SenderId { get; set; }
 
         public Guid RoomId { get; set; }
+
+        public DateTime PublishedAt { get; set; }
     }
 }
