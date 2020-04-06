@@ -61,7 +61,7 @@ namespace YodaIM.Chat
             var user = _chatHandler.User(Context.ConnectionId);
 
             await Task.WhenAll(
-                rooms.Select(roomId => SendUserLeftMessage(user.Id, roomId)).ToArray()
+                rooms.Select(roomId => SendUserLeftMessage(user, roomId)).ToArray()
                 );
 
             _chatHandler.RemoveConnection(Context.ConnectionId);
@@ -73,45 +73,21 @@ namespace YodaIM.Chat
         {
             if (_chatHandler.InRoom(Context.ConnectionId, messageDto.RoomId))
             {
-                List<Guid> attachments;
+                List<FileModel> attachments;
                 var user = _chatHandler.User(Context.ConnectionId);
                 Result<Message> message;
                 if (messageDto.Attachments.Count() == 0)
                 {
                     message = await _messageService.CreateMessage(user, messageDto.RoomId, messageDto.Text);
-                    attachments = new List<Guid>();
+                    attachments = new List<FileModel>();
                 }
                 else
                 {
                     var attachmentModels = await _fileService.GetAll(messageDto.Attachments);
-                    attachments = attachmentModels.Select(a => a.Id).ToList();
+                    attachments = attachmentModels.ToList();
                     message = await _messageService.CreateMessage(user, messageDto.RoomId, messageDto.Text, attachmentModels);
                 }
                 await SendMessage(message.Value, attachments, messageDto.Stamp);
-            }
-        }
-
-
-        [Obsolete]
-        public async Task Send(string text, Guid roomId)
-        {
-            if (_chatHandler.InRoom(Context.ConnectionId, roomId))
-            {
-                var user = _chatHandler.User(Context.ConnectionId);
-                var message = await _messageService.CreateMessage(user, roomId, text);
-                await SendMessage(message.Value);
-            }
-        }
-
-        [Obsolete]
-        public async Task SendWithAttachments(string text, Guid roomId, List<Guid> attachments)
-        {
-            if (_chatHandler.InRoom(Context.ConnectionId, roomId))
-            {
-                var user = _chatHandler.User(Context.ConnectionId);
-                var attachmentsModels = await _fileService.GetAll(attachments);
-                var message = await _messageService.CreateMessage(user, roomId, text, attachmentsModels);
-                await SendMessage(message.Value);
             }
         }
 
@@ -126,7 +102,7 @@ namespace YodaIM.Chat
             {
                 var user = _chatHandler.User(Context.ConnectionId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, RoomGroup(roomId));
-                await SendUserJoinedMessage(user.Id, roomId);
+                await SendUserJoinedMessage(user, roomId);
                 _chatHandler.AddRoom(Context.ConnectionId, roomId);
             }
         }
@@ -139,33 +115,16 @@ namespace YodaIM.Chat
             }
 
             var user = _chatHandler.User(Context.ConnectionId);
-            await SendUserLeftMessage(user.Id, roomId);
+            await SendUserLeftMessage(user, roomId);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, RoomGroup(roomId));
             _chatHandler.RemoveRoom(Context.ConnectionId, roomId);
         }
 
-        private void Disconnect() => Context.GetHttpContext().Abort();
+        private Task SendUserJoinedMessage(User user, Guid roomId) =>
+            Clients.Group(RoomGroup(roomId)).SendAsync("UserJoined", Dto.CreateUserJoinedDto(user, roomId));
 
-        private async Task SendUserJoinedMessage(Guid userId, Guid roomId)
-        {
-            // TODO Remove next statement (obsolete)
-            await Clients
-                .Group(RoomGroup(roomId))
-                .SendAsync("Joined", userId, roomId);
-
-            await SendUserActionMessage(userId, roomId, UserActionType.Joined);
-        }
-
-        private async Task SendUserLeftMessage(Guid userId, Guid roomId)
-        {
-            // TODO Remove next statement (obsolete)
-            await Clients
-                .Group(RoomGroup(roomId))
-                .SendAsync("Left", userId, roomId);
-
-
-            await SendUserActionMessage(userId, roomId, UserActionType.Left);
-        }
+        private Task SendUserLeftMessage(User user, Guid roomId) =>
+            Clients.Group(RoomGroup(roomId)).SendAsync("UserLeft", Dto.CreateUserDepartedDto(user, roomId));
 
         private Task SendUserActionMessage(Guid userId, Guid roomId, UserActionType type)
         {
@@ -175,10 +134,13 @@ namespace YodaIM.Chat
                 .SendAsync("UserAction", dto);
         }
 
+        private void Disconnect() => Context.GetHttpContext().Abort();
+
+
         [Obsolete]
         private async Task SendMessage(Message message) => await Clients.Group(RoomGroup(message.RoomId)).SendAsync("Message", new OldChatMessageDto(message));
 
-        private async Task SendMessage(Message message, List<Guid> attachments, Guid stamp)
+        private async Task SendMessage(Message message, List<FileModel> attachments, Guid stamp)
         {
             var dto = Dto.CreateMessage(message, attachments);
             var ack = Dto.CreateMessageAck(message, stamp);

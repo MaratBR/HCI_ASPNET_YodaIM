@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace YodaIM.Chat.DTO
 {
-    public class RoomStateDto
+    public class UserDepartedDto
     {
         public Guid RoomId { get; set; }
 
-        public List<ChatUserDto> Users { get; set; }
+        public Guid UserId { get; set; }
     }
 }

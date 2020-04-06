@@ -22,8 +22,16 @@ namespace YodaIM.Services.Database
             if (!await _roomService.Exists(roomId))
                 return Results.Fail<Message>($"Room with ID = {roomId} not found");
 
+            if (sender == null)
+                throw new ArgumentNullException(nameof(sender));
+
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
+            context.Attach(sender);
             var message = new Message
             {
+                Sender = sender,
                 SenderId = sender.Id,
                 RoomId = roomId,
                 Text = text
@@ -50,6 +58,16 @@ namespace YodaIM.Services.Database
             }
 
             return Results.Ok<Message>(message);
+        }
+
+        public async Task<List<Message>> GetMessages(Guid roomId, int limit = 50, DateTime? beforeUtc = null)
+        {
+            beforeUtc = beforeUtc ?? DateTime.UtcNow;
+            return await context.Messages
+                .Where(m => m.RoomId == roomId && m.PublishedAt < beforeUtc)
+                .OrderBy(m => m.PublishedAt)
+                .Take(limit)
+                .ToListAsync();
         }
     }
 }

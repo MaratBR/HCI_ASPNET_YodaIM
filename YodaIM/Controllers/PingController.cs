@@ -25,7 +25,14 @@ namespace YodaIM.Controllers
             "Patience you must have my young Padawan.",
             "In a dark place we find ourselves, and a little more knowledge lights our way.",
             "Truly wonderful the mind of a child is.",
-            "When you look at the dark side, careful you must be. For the dark side looks back."
+            "When you look at the dark side, careful you must be. For the dark side looks back.",
+            "The shadow of greed, attachment is. What you fear to lose, train yourself to release. Let go of fear, and loss cannot harm you.",
+            "The more we learn, the more we discover how much we do not know.",
+            "So great life is, to finish it no way there is. The more you would enter into it, the vaster would be the possibilities that open their doors.",
+            "Poetic you become when in love you are. In love continuously are those people who are called poets.",
+            "No greater gift there is, than a generous heart.",
+            "Always more questions than answers, there are.",
+            "Age more than a count of heartbeats is. Age is how many mistakes you have made."
         };
         private readonly Random rnd = new Random();
 

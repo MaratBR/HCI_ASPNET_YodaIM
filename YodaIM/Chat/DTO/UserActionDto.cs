@@ -7,8 +7,9 @@ namespace YodaIM.Chat.DTO
 {
     public enum UserActionType : byte
     {
-        Joined,
-        Left
+        [Obsolete] Joined,
+        [Obsolete] Left,
+        QuacksterAscending
     }
 
     public class UserActionDto

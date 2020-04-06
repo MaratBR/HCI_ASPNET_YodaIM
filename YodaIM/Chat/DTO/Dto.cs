@@ -8,12 +8,18 @@ namespace YodaIM.Chat.DTO
 {
     public static class Dto
     {
-        public static ChatMessageDto CreateMessage(Message message, List<Guid> attachments) => new ChatMessageDto
+        public static ChatMessageDto CreateMessage(Message message, List<FileModel> attachments) => new ChatMessageDto
         {
             Text = message.Text,
-            SenderId = message.SenderId,
+            Sender = CreateSenderDto(message.Sender),
             Id = message.Id,
-            Attachments = attachments,
+            Attachments = attachments.Select(
+                a => new ChatAttachmentDto
+                {
+                    Id = a.Id,
+                    Name = a.FileName,
+                    Size = a.Size
+                }).ToList(),
             RoomId = message.RoomId,
             PublishedAt = message.PublishedAt
         };
@@ -29,6 +35,31 @@ namespace YodaIM.Chat.DTO
             ActionType = type,
             UserId = userId,
             RoomId = roomId
+        };
+
+        public static ChatMessageSenderDto CreateSenderDto(User user) => new ChatMessageSenderDto
+        {
+            Id = user.Id,
+            UserName = user.UserName
+        };
+
+        public static ChatUserDto CreateChatUser(User user) => new ChatUserDto
+        {
+            Name = user.UserName,
+            Id = user.Id,
+            Gender = user.Gender
+        };
+
+        public static UserJoinedRoomDto CreateUserJoinedDto(User user, Guid room) => new UserJoinedRoomDto
+        {
+            User = CreateChatUser(user),
+            RoomId = room
+        };
+
+        public static UserDepartedDto CreateUserDepartedDto(User user, Guid room) => new UserDepartedDto
+        {
+            UserId = user.Id,
+            RoomId = room
         };
     }
 }

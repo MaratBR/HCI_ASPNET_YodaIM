@@ -50,6 +50,8 @@ namespace YodaIM.Controllers
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
+        public Guid UserId { get; set; }
+        public DateTime ExpiresAt { get; set; }
     }
 
 
@@ -132,7 +134,9 @@ namespace YodaIM.Controllers
                     return new AuthenticateResponse
                     {
                         AccessToken = tokenService.Strigify(token),
-                        RefreshToken = refreshTokenGuid.ToString()
+                        RefreshToken = refreshTokenGuid.ToString(),
+                        UserId = user.Id,
+                        ExpiresAt = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc).AddSeconds((int)token.Payload.Exp)
                     };
                 }
             }

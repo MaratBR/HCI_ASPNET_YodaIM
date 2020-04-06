@@ -11,9 +11,9 @@ namespace YodaIM.Chat.DTO
 
         public string Text { get; set; }
 
-        public List<Guid> Attachments { get; set; }
+        public List<ChatAttachmentDto> Attachments { get; set; }
 
-        public Guid SenderId { get; set; }
+        public ChatMessageSenderDto Sender { get; set; }
 
         public Guid RoomId { get; set; }
 

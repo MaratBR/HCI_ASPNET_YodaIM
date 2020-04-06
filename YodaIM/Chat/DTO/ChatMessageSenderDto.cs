@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using YodaIM.Models;
 
 namespace YodaIM.Chat.DTO
 {
-    public class RoomStateDto
+    public class ChatMessageSenderDto
     {
-        public Guid RoomId { get; set; }
+        public Guid Id { get; set; }
 
-        public List<ChatUserDto> Users { get; set; }
+        public string UserName { get; set; }
     }
 }
