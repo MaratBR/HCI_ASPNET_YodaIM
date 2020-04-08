@@ -65,6 +65,9 @@ namespace YodaIM.Services.Database
             beforeUtc = beforeUtc ?? DateTime.UtcNow;
             return await context.Messages
                 .Where(m => m.RoomId == roomId && m.PublishedAt < beforeUtc)
+                .Include(m => m.Sender)
+                .Include(m => m.MessageAttachments)
+                .ThenInclude(a => a.FileModel)
                 .OrderBy(m => m.PublishedAt)
                 .Take(limit)
                 .ToListAsync();

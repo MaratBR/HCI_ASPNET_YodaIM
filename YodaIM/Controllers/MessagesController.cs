@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using YodaIM.Chat.DTO;
 using YodaIM.Models;
 using YodaIM.Services;
 
@@ -20,12 +21,6 @@ namespace YodaIM.Controllers
         public MessagesController(IMessageService messageService)
         {
             this.messageService = messageService;
-        }
-
-        [HttpGet("{roomId}")]
-        public async Task<ActionResult<List<Message>>> GetMessages([FromRoute] Guid roomId, [FromQuery] DateTime? before = null)
-        {
-            return await messageService.GetMessages(roomId, beforeUtc: before);
         }
     }
 }

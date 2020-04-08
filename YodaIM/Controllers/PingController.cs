@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ namespace YodaIM.Controllers
         public ActionResult Ping()
         {
             string saying = YODA_QUOTES[rnd.Next(0, YODA_QUOTES.Length - 1)];
-            return Ok("pong\n" + saying);
+            return Content(saying, "text/yoda-saying");
         }
     }
 }
