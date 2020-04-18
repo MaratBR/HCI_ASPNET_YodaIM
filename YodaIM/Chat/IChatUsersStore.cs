@@ -28,21 +28,6 @@ namespace YodaIM.Chat
         Result RemoveRoom([NotNull] string connectionId, Guid roomId);
     }
 
-    class ChatUser
-    {
-        private int connectionsCount;
-
-        public User InnerUser { get; set; }
-
-        public int ConnectionsCount => connectionsCount;
-
-        // https://stackoverflow.com/questions/13181740/c-sharp-thread-safe-fastest-counter
-
-        public void IncrementConnections() => Interlocked.Increment(ref connectionsCount);
-
-        public void DecrementConnections() => Interlocked.Decrement(ref connectionsCount);
-    }
-
     class ChatHandler : IChatHandler
     {
         private Dictionary<string, Guid> connectionUsers = new Dictionary<string, Guid>();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -26,6 +27,16 @@ namespace YodaIM.Controllers
         public List<ChatMessageDto> Messages { get; set; }
     }
 
+    public class RoomMembersResponse
+    {
+        public List<User> Users { get; set; }
+    }
+
+    public class ListOfRoomsResponse
+    {
+        public List<Room> Rooms { get; set; }
+    }
+
 
     [Route("api/[controller]")]
     [ApiController]
@@ -46,21 +57,25 @@ namespace YodaIM.Controllers
         [Authorize]
         public async Task<ActionResult<Room>> Create([FromBody] CreateRoomRequest request)
         {
+            var user = await userManager.GetUserAsyncOrFail(User);
             var room = await roomService.CreateRoom(request);
 
-            return Created($"/api/room/{room.Id}", room);
+            await roomService.JoinRoom(user, room);
+
+
+            return Created($"/api/rooms/{room.Id}", room);
         }
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<dynamic>> List()
+        public async Task<ActionResult<ListOfRoomsResponse>> List()
         {
             var user = await userManager.GetUserAsyncOrFail(User);
             var rooms = await roomService.ListRooms(user);
 
-            return new
+            return new ListOfRoomsResponse
             {
-                rooms = rooms
+                Rooms = rooms
             };
         }
 
@@ -71,6 +86,13 @@ namespace YodaIM.Controllers
         [HttpGet("{id}/messages")]
         public async Task<ActionResult<RoomMessagesResponse>> GetMessages([FromRoute] Guid id, [FromQuery] DateTime? before = null)
         {
+            var user = await userManager.GetUserAsyncOrFail(User);
+
+            if (!await roomService.InRoom(user, id))
+            {
+                return Forbid();
+            }
+
             var messages = (await messageService.GetMessages(id, beforeUtc: before))
                 .Select(m =>
                 {
@@ -81,6 +103,55 @@ namespace YodaIM.Controllers
             return new RoomMessagesResponse
             {
                 Messages = messages
+            };
+        }
+
+        [HttpPost("membership/{id}")]
+        public async Task<ActionResult> JoinRoom([FromRoute] Guid id)
+        {
+            var user = await userManager.GetUserAsyncOrFail(User);
+            var room = await roomService.GetById(id);
+
+            if (room == null)
+                return NotFound();
+
+            if (!await roomService.InRoom(user, room))
+            {
+                await roomService.JoinRoom(user, room);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("membership/{id}")]
+        public async Task<ActionResult> LeaveRoom([FromRoute] Guid id)
+        {
+            var user = await userManager.GetUserAsyncOrFail(User);
+            var room = await roomService.GetById(id);
+
+            if (room == null)
+                return NotFound();
+
+            if (await roomService.InRoom(user, room))
+            {
+                await roomService.LeaveRoom(user, room);
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet("{id}/members")]
+        public async Task<ActionResult<RoomMembersResponse>> GetRoomMembers([FromRoute] Guid id)
+        {
+            var room = await roomService.GetById(id);
+
+            if (room == null)
+                return NotFound();
+
+            var users = await roomService.GetUsersFromRoom(room);
+            return new RoomMembersResponse
+            {
+                Users = users
             };
         }
 

@@ -14,12 +14,13 @@ using YodaIM.Helpers;
 namespace YodaIM.Models
 {
 	public class User : IdentityUser<Guid>
-    {
-		[Required]
-        public string Alias { get; set; }
+	{
+		public string Alias { get; set; }
 
 		[DefaultValue(0)]
 		public byte Gender { get; set; } = 0;
+
+		public List<UserRoom> Rooms { get; set; }
 
 		// https://gist.github.com/theuntitled/7c70fff994993d7644f12d5bb0dc205f
 		#region overrides
@@ -48,7 +49,7 @@ namespace YodaIM.Models
 		[JsonIgnore] [Required]
 		public override bool LockoutEnabled { get; set; }
 
-		[JsonIgnore] [Required]
+		[JsonIgnore]
 		public override DateTimeOffset? LockoutEnd { get; set; }
 
 		[JsonIgnore] [Required]

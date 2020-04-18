@@ -16,6 +16,7 @@ namespace YodaIM.Models
         public DbSet<Room> Rooms { get; set; }
         public DbSet<FileModel> FileModels { get; set; }
         public DbSet<BinaryBlob> BinaryBlobs { get; set; }
+        public DbSet<UserRoom> UserRooms { get; set; }
 
         public Context(DbContextOptions<Context> options)
             : base(options)
@@ -51,6 +52,19 @@ namespace YodaIM.Models
                 .HasOne(a => a.FileModel)
                 .WithMany(fm => fm.MessageAttachments)
                 .HasForeignKey(a => a.FileModelId);
+
+            builder.Entity<UserRoom>()
+                .HasKey(ur => new { ur.RoomId, ur.UserId });
+
+            builder.Entity<UserRoom>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.Rooms)
+                .HasForeignKey(ur => ur.UserId);
+
+            builder.Entity<UserRoom>()
+                .HasOne(ur => ur.Room)
+                .WithMany(r => r.Users)
+                .HasForeignKey(ur => ur.RoomId);
         }
     }
 }

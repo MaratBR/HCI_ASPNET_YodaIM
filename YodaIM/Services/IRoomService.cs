@@ -20,8 +20,17 @@ namespace YodaIM.Services
 
         Task<Room> CreateRoom(IRoomInfo info);
 
-        Task<ICollection<Room>> ListRooms(User user);
+        Task<List<Room>> ListRooms(User user);
 
         Task<bool> Exists(Guid id);
+        Task<bool> InRoom(User user, Room room);
+
+        Task<bool> InRoom(User user, Guid roomId);
+
+        Task JoinRoom(User user, Room room);
+
+        Task LeaveRoom(User user, Room room);
+
+        Task<List<User>> GetUsersFromRoom(Room room);
     }
 }
