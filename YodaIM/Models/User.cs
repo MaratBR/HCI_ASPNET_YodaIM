@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,50 +13,45 @@ using YodaIM.Helpers;
 
 namespace YodaIM.Models
 {
-	public enum Gender
-	{
-		Respect,
-		Smooch
-	}
-
-
 	public class User : IdentityUser<Guid>
     {
+		[Required]
         public string Alias { get; set; }
 
-		[JsonConverter(typeof(StringNullableEnumConverter<Gender?>))]
-		public Gender? Gender { get; set; }
+		[DefaultValue(0)]
+		public byte Gender { get; set; } = 0;
 
 		// https://gist.github.com/theuntitled/7c70fff994993d7644f12d5bb0dc205f
 		#region overrides
 
+		[Required] [JsonIgnore]
 		public override string Email { get; set; }
 
-		[JsonIgnore]
+		[JsonIgnore] [Required]
 		public override bool EmailConfirmed { get; set; }
 
-		[JsonIgnore]
+		[JsonIgnore] [Required]
 		public override bool TwoFactorEnabled { get; set; }
 
 		[JsonIgnore]
 		public override string PhoneNumber { get; set; }
 
-		[JsonIgnore]
+		[JsonIgnore] [Required]
 		public override bool PhoneNumberConfirmed { get; set; }
 
-		[JsonIgnore]
+		[JsonIgnore] [Required]
 		public override string PasswordHash { get; set; }
 
-		[JsonIgnore]
+		[JsonIgnore] [Required]
 		public override string SecurityStamp { get; set; }
 
-		[JsonIgnore]
+		[JsonIgnore] [Required]
 		public override bool LockoutEnabled { get; set; }
 
-		[JsonIgnore]
+		[JsonIgnore] [Required]
 		public override DateTimeOffset? LockoutEnd { get; set; }
 
-		[JsonIgnore]
+		[JsonIgnore] [Required]
 		public override int AccessFailedCount { get; set; }
 
 		#endregion

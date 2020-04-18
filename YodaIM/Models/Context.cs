@@ -32,11 +32,7 @@ namespace YodaIM.Models
                 .IsUnique();
 
             user
-                .Property(u => u.Gender)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => (Gender)Enum.Parse(typeof(Gender), v)
-                );
+                .Property(u => u.Gender);
 
             builder.Entity<BinaryBlob>()
                 .Property(fm => fm.Sha256)

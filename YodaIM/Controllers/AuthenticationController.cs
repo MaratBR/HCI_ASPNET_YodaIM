@@ -35,8 +35,7 @@ namespace YodaIM.Controllers
         [Required]
         public string PhoneNumber { get; set; }
 
-        [JsonConverter(typeof(StringNullableEnumConverter<Gender?>))]
-        public Gender? Gender { get; set; } = null;
+        public byte Gender { get; set; } = 0;
     }
 
     public class AuthenticateRequest
