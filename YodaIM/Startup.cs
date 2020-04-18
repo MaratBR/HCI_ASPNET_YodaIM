@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using YodaIM.Chat;
 using YodaIM.Helpers;
 using YodaIM.Models;
@@ -57,6 +58,10 @@ namespace YodaIM
             services.AddApplicationServices();
             services.AddDbContext<Context>(builder);
             services.AddSignalR();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "YodaIM API", Version = "v1-dev" });
+            });
 
 
             services
@@ -138,10 +143,19 @@ namespace YodaIM
                 app.UseHsts();
             }
 
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseWebSockets();
+
 
             app.UseEndpoints(endpoints =>
             {
