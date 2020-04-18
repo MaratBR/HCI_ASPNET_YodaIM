@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,7 +23,7 @@ namespace YodaIM.Controllers
 
     public class RegistrationRequest
     {
-        [Required] [MinLength(2, ErrorMessage = "UserName must be at least 2 characters")]
+        [Required] [MinLength(2, ErrorMessage = "UserName must be at least 2 characters")] [MaxLength(50, ErrorMessage = "UserName must be at most 50 characters")]
         public string UserName { get; set; }
 
         [Required] // судя по всему валидация пароля происходит где-то в закромах ASP.NET Identity, так что тут ничего не надо
@@ -34,6 +35,7 @@ namespace YodaIM.Controllers
         [Required]
         public string PhoneNumber { get; set; }
 
+        [JsonConverter(typeof(StringNullableEnumConverter<Gender?>))]
         public Gender? Gender { get; set; } = null;
     }
 
@@ -49,7 +51,6 @@ namespace YodaIM.Controllers
     public class AuthenticateResponse
     {
         public string AccessToken { get; set; }
-        public string RefreshToken { get; set; }
         public Guid UserId { get; set; }
         public DateTime ExpiresAt { get; set; }
     }
@@ -116,7 +117,7 @@ namespace YodaIM.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await userManager.FindByUserNameOrEmail(request.Login);
+            var user = await userManager.FindByLogin(request.Login);
 
             if (user != null)
             {
@@ -129,12 +130,10 @@ namespace YodaIM.Controllers
                 if (result.Succeeded)
                 {
                     var token = tokenService.CreateIdentityToken(user);
-                    var refreshTokenGuid = await tokenService.CreateRefreshToken(user);
 
                     return new AuthenticateResponse
                     {
                         AccessToken = tokenService.Strigify(token),
-                        RefreshToken = refreshTokenGuid.ToString(),
                         UserId = user.Id,
                         ExpiresAt = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc).AddSeconds((int)token.Payload.Exp)
                     };

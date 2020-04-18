@@ -31,7 +31,7 @@ namespace YodaIM.Helpers
         }
 
 
-        public static async Task<User> FindByUserNameOrEmail(this UserManager<User> manager, string login)
+        public static async Task<User> FindByLogin(this UserManager<User> manager, string login)
         {
             return await manager.Users.Where(u => u.Email == login || u.UserName == login).SingleOrDefaultAsync();
         }

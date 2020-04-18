@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ namespace YodaIM.Chat
 
         User User([NotNull] string connectionId);
 
+        List<User> GetUsersFromRoom(Guid roomId);
+
         ICollection<Guid> GetRoomIds([NotNull] string connectionId);
 
         bool InRoom([NotNull] string connectionId, Guid roomId);
@@ -29,7 +32,7 @@ namespace YodaIM.Chat
     {
         private int connectionsCount;
 
-        public User User { get; set; }
+        public User InnerUser { get; set; }
 
         public int ConnectionsCount => connectionsCount;
 
@@ -58,7 +61,7 @@ namespace YodaIM.Chat
                 {
                     users[user.Id] = new ChatUser
                     {
-                        User = user
+                        InnerUser = user
                     };
                 }
             }
@@ -85,6 +88,11 @@ namespace YodaIM.Chat
                 return connectionRooms[connectionId];
 
             throw new KeyNotFoundException("No rooms found for connection ID = " + connectionId);
+        }
+
+        public List<User> GetUsersFromRoom(Guid roomId)
+        {
+            throw new NotImplementedException();
         }
 
         public bool InRoom([NotNull] string connectionId, Guid roomId) => connectionRooms.ContainsKey(connectionId) && connectionRooms[connectionId].Contains(roomId);
@@ -126,7 +134,7 @@ namespace YodaIM.Chat
 
             Guid id = connectionUsers[connectionId];
 
-            return users[id].User;
+            return users[id].InnerUser;
         }
     }
 }

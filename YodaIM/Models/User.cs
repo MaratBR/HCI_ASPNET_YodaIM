@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using YodaIM.Helpers;
 
 namespace YodaIM.Models
 {
@@ -22,7 +23,8 @@ namespace YodaIM.Models
     {
         public string Alias { get; set; }
 
-        public Gender? Gender { get; set; }
+		[JsonConverter(typeof(StringNullableEnumConverter<Gender?>))]
+		public Gender? Gender { get; set; }
 
 		// https://gist.github.com/theuntitled/7c70fff994993d7644f12d5bb0dc205f
 		#region overrides
