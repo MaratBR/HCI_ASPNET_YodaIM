@@ -23,7 +23,7 @@ namespace YodaIM.Helpers
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             return services
-                .AddSingleton<IChatHandler, ChatHandler>()
+                .AddSingleton<IChatState, ChatState>()
                 .AddScoped<ITokenService, TokenService>()
                 .AddScoped<IMessageService, MessageService>()
                 .AddScoped<IFileService, FileService>()

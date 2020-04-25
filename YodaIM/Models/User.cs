@@ -20,7 +20,8 @@ namespace YodaIM.Models
 		[DefaultValue(0)]
 		public byte Gender { get; set; } = 0;
 
-		public List<UserRoom> Rooms { get; set; }
+		[JsonIgnore]
+		public virtual List<UserRoom> Rooms { get; set; }
 
 		// https://gist.github.com/theuntitled/7c70fff994993d7644f12d5bb0dc205f
 		#region overrides

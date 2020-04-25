@@ -31,6 +31,6 @@ namespace YodaIM.Services
 
         Task LeaveRoom(User user, Room room);
 
-        Task<List<User>> GetUsersFromRoom(Room room);
+        Task<List<UserRoom>> GetUsersFromRoom(Room room);
     }
 }

@@ -31,11 +31,11 @@ namespace YodaIM.Services.Database
 
         public Task<Room> GetById(Guid id) => context.Rooms.Where(r => r.Id == id).SingleOrDefaultAsync();
 
-        public Task<List<User>> GetUsersFromRoom(Room room)
+        public Task<List<UserRoom>> GetUsersFromRoom(Room room)
         {
             return context.UserRooms
                 .Where(ur => ur.RoomId == room.Id)
-                .Select(ur => ur.User)
+                .Include(ur => ur.User)
                 .ToListAsync();
         }
 

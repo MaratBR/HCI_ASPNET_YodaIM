@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using YodaIM.Chat;
 using YodaIM.Chat.DTO;
 using YodaIM.Helpers;
 using YodaIM.Models;
@@ -29,7 +30,7 @@ namespace YodaIM.Controllers
 
     public class RoomMembersResponse
     {
-        public List<User> Users { get; set; }
+        public List<ChatMembershipDto> Users { get; set; }
     }
 
     public class ListOfRoomsResponse
@@ -141,7 +142,7 @@ namespace YodaIM.Controllers
         }
 
         [HttpGet("{id}/members")]
-        public async Task<ActionResult<RoomMembersResponse>> GetRoomMembers([FromRoute] Guid id)
+        public async Task<ActionResult<RoomMembersResponse>> GetRoomMembers([FromRoute] Guid id, [FromServices] IChatState chatState)
         {
             var room = await roomService.GetById(id);
 
@@ -151,7 +152,7 @@ namespace YodaIM.Controllers
             var users = await roomService.GetUsersFromRoom(room);
             return new RoomMembersResponse
             {
-                Users = users
+                Users = users.Select(r => new ChatMembershipDto { User = r.User, IsOnline = chatState.IsOnline(r.User) }).ToList()
             };
         }
 

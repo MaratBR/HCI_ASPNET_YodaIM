@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using YodaIM.Models;
 
 namespace YodaIM.Chat.DTO
 {
-    public class UserDepartedDto
+    public class ChatMembershipDto
     {
-        public Guid UserId { get; set; }
+        public User User { get; set; }
+
+        public bool IsOnline { get; set; }
     }
 }

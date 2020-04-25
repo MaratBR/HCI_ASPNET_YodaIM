@@ -50,16 +50,16 @@ namespace YodaIM.Chat.DTO
             Gender = user.Gender
         };
 
-        public static UserJoinedRoomDto CreateUserJoinedDto(User user, Guid room) => new UserJoinedRoomDto
-        {
-            User = CreateChatUser(user),
-            RoomId = room
-        };
-
-        public static UserDepartedDto CreateUserDepartedDto(User user, Guid room) => new UserDepartedDto
+        public static UserStatusChanged CreateUserJoinedDto(User user) => new UserStatusChanged
         {
             UserId = user.Id,
-            RoomId = room
+            IsOnline = true
+        };
+
+        public static UserStatusChanged CreateUserDepartedDto(User user) => new UserStatusChanged
+        {
+            UserId = user.Id,
+            IsOnline = false
         };
     }
 }
