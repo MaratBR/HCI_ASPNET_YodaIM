@@ -8,7 +8,7 @@ namespace YodaIM.Models
 {
     public class BinaryBlob
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public byte[] Data { get; set; }

@@ -7,7 +7,7 @@ namespace YodaIM.Chat.DTO
 {
     public class UserStatusChanged
     {
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
 
         public bool IsOnline { get; set; }
     }

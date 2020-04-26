@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace YodaIM.Controllers
 {
     public class CreateRoomRequest : IRoomInfo
     {
+        [Required]
         public string Name { get; set; }
         public string Description { get; set; }
     }

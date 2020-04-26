@@ -11,7 +11,7 @@ namespace YodaIM.Chat
     {
         private int connectionsCount = 0;
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public ICollection<Guid> Rooms { get; } = new HashSet<Guid>();
 

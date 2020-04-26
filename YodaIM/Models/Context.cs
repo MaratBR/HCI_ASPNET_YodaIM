@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace YodaIM.Models
 {
-    public class Context : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+    public class Context : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Message> Messages { get; set; }

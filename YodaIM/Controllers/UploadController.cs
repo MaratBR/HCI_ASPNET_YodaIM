@@ -85,5 +85,21 @@ namespace YodaIM.Controllers
             return File(file.BinaryBlob.Data, file.ContentType);
         }
 
+        public class UserFilesResponse
+        {
+            public List<FileModel> Files { get; set; }
+        }
+
+        [HttpGet("yours")]
+        public async Task<UserFilesResponse> GetUserFiles()
+        {
+            var user = await userManager.GetUserAsyncOrFail(User);
+
+            return new UserFilesResponse
+            {
+                Files = await _fileService.GetUserFiles(user)
+            };
+        }
+
     }
 }

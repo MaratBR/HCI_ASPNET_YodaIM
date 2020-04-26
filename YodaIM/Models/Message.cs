@@ -12,7 +12,7 @@ namespace YodaIM.Models
         public long Id { get; set; }
         public string Text { get; set; }
 
-        public Guid SenderId { get; set; }
+        public int SenderId { get; set; }
         public Guid RoomId { get; set; }
 
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;

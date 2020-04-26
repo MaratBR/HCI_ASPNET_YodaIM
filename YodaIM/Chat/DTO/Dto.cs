@@ -30,7 +30,7 @@ namespace YodaIM.Chat.DTO
             Stamp = stamp
         };
 
-        public static UserActionDto CreateUserAction(Guid userId, Guid roomId, UserActionType type) => new UserActionDto
+        public static UserActionDto CreateUserAction(int userId, Guid roomId, UserActionType type) => new UserActionDto
         {
             ActionType = type,
             UserId = userId,

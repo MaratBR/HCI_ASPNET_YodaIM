@@ -10,7 +10,7 @@ namespace YodaIM.Models
     {
         public Guid RoomId { get; set; }
 
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
 
         public DateTime Since { get; set; } = DateTime.UtcNow;
 

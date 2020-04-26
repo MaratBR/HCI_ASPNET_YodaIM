@@ -29,10 +29,10 @@ namespace YodaIM.Controllers
         [Required] // судя по всему валидация пароля происходит где-то в закромах ASP.NET Identity, так что тут ничего не надо
         public string Password { get; set; }
 
-        [Required]
+        [Required] [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
+        [Required] [Phone]
         public string PhoneNumber { get; set; }
 
         public byte Gender { get; set; } = 0;
@@ -50,7 +50,7 @@ namespace YodaIM.Controllers
     public class AuthenticateResponse
     {
         public string AccessToken { get; set; }
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
         public DateTime ExpiresAt { get; set; }
     }
 

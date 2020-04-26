@@ -7,6 +7,6 @@ namespace YodaIM.Chat.DTO
 {
     public class UserDepartedDto
     {
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
     }
 }

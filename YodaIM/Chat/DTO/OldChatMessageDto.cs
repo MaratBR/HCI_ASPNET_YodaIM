@@ -15,7 +15,7 @@ namespace YodaIM.Chat.DTO
         public string Text => message.Text;
         public DateTime PublishedAt => message.PublishedAt;
         public ICollection<Guid> Attachments => message.MessageAttachments?.Select(a => a.FileModelId).ToList() ?? new List<Guid>();
-        public Guid SenderId => message.SenderId;
+        public int SenderId => message.SenderId;
         public Guid RoomId => message.RoomId;
 
         public OldChatMessageDto(Message message)

@@ -32,6 +32,11 @@ namespace YodaIM.Services.Database
             return await context.FileModels.Where(fm => ids.Contains(fm.Id)).ToListAsync();
         }
 
+        public Task<List<FileModel>> GetUserFiles(User user)
+        {
+            return context.FileModels.Where(fm => fm.UserId == user.Id).OrderBy(fm => fm.UploadedAt).ToListAsync();
+        }
+
         public Task<FileModel> GetWithData(Guid id)
         {
             return context.FileModels

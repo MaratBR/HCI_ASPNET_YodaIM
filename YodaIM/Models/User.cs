@@ -13,12 +13,12 @@ using YodaIM.Helpers;
 
 namespace YodaIM.Models
 {
-	public class User : IdentityUser<Guid>
+	public class User : IdentityUser<int>
 	{
-		public string Alias { get; set; }
-
 		[DefaultValue(0)]
 		public byte Gender { get; set; } = 0;
+
+		public string Status { get; set; }
 
 		[JsonIgnore]
 		public virtual List<UserRoom> Rooms { get; set; }
