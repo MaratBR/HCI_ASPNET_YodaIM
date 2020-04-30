@@ -59,37 +59,36 @@ namespace YodaIM.Controllers
             public string Status { get; set; }
 
             public byte? Gender { get; set; }
-
-            public void Apply(User user)
-            {
-                if (UserName != null)
-                {
-                    user.UserName = UserName;
-                    user.NormalizedUserName = UserName.ToUpper();
-                }
-
-                if (Gender != null)
-                    user.Gender = (byte)Gender;
-
-                if (Status != null)
-                    user.Status = Status;
-            }
         }
 
         [HttpPut("you")]
         public async Task<ActionResult> UpdateYourself([FromBody] UpdateUserRequest r)
         {
             var user = await userManager.GetUserAsyncOrFail(User);
-            return await UpdateUser(r, user);
-        }
-
-        private async Task<ActionResult> UpdateUser(UpdateUserRequest r, User user)
-        {
 
             if (user == null)
                 return NotFound();
 
-            r.Apply(user);
+
+            if (r.UserName != null && !string.Equals(r.UserName = r.UserName.Trim(' ', '\n', '\t'), user.UserName, StringComparison.OrdinalIgnoreCase))
+            {
+                var normalized = r.UserName.ToUpper();
+                if (await context.Users.Where(u => u.NormalizedUserName == normalized).AnyAsync())
+                {
+                    ModelState.AddModelError("userName", "Username is taken");
+                    return BadRequest(ModelState);
+                }
+
+                user.UserName = r.UserName;
+                user.NormalizedUserName = normalized;
+            }
+
+            if (r.Gender != null)
+                user.Gender = (byte)r.Gender;
+
+            if (r.Status != null)
+                user.Status = r.Status;
+
             await context.SaveChangesAsync();
 
             return NoContent();

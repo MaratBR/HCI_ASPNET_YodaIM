@@ -25,9 +25,6 @@ namespace YodaIM.Services.Database
             if (sender == null)
                 throw new ArgumentNullException(nameof(sender));
 
-            if (text == null)
-                throw new ArgumentNullException(nameof(text));
-
             context.Attach(sender);
             var message = new Message
             {

@@ -31,16 +31,8 @@ namespace YodaIM.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<FileModel>> Upload()
+        public async Task<ActionResult<FileModel>> Upload([FromForm] IFormFile file)
         {
-            if (Request.Form.Files.Count == 0)
-            {
-                ModelState.AddModelError("file", "File data not specified");
-                return BadRequest(ModelState);
-            }
-
-            var file = Request.Form.Files[0];
-
             if (file.Length > 0 && file.Length < 1024 * 1024 * 1024)
             {
                 return await _fileService.Upload(file, await userManager.GetUserAsyncOrFail(User), FileType.Generic);

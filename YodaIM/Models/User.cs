@@ -26,13 +26,29 @@ namespace YodaIM.Models
 		// https://gist.github.com/theuntitled/7c70fff994993d7644f12d5bb0dc205f
 		#region overrides
 
-		[Required] [JsonIgnore]
+		[Required]
+		[JsonIgnore]
 		public override string Email { get; set; }
 
-		[JsonIgnore] [Required]
+		[Required]
+		[JsonIgnore]
+		public override string NormalizedUserName { get; set; }
+
+		[Required]
+		[JsonIgnore]
+		public override string NormalizedEmail { get; set; }
+
+
+		[Required]
+		[JsonIgnore]
+		public override string ConcurrencyStamp { get; set; }
+
+		[Required]
+		[JsonIgnore]
 		public override bool EmailConfirmed { get; set; }
 
-		[JsonIgnore] [Required]
+		[Required]
+		[JsonIgnore]
 		public override bool TwoFactorEnabled { get; set; }
 
 		[JsonIgnore]
