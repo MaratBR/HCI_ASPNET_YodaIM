@@ -39,7 +39,6 @@ namespace YodaIM.Models
 		public override string NormalizedEmail { get; set; }
 
 
-		[Required]
 		[JsonIgnore]
 		public override string ConcurrencyStamp { get; set; }
 
@@ -60,7 +59,7 @@ namespace YodaIM.Models
 		[JsonIgnore] [Required]
 		public override string PasswordHash { get; set; }
 
-		[JsonIgnore] [Required]
+		[JsonIgnore]
 		public override string SecurityStamp { get; set; }
 
 		[JsonIgnore] [Required]

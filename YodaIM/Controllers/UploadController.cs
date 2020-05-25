@@ -82,7 +82,7 @@ namespace YodaIM.Controllers
             public List<FileModel> Files { get; set; }
         }
 
-        [HttpGet("yours")]
+        [HttpGet("mine")]
         public async Task<UserFilesResponse> GetUserFiles()
         {
             var user = await userManager.GetUserAsyncOrFail(User);
