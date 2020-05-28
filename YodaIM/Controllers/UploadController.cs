@@ -83,13 +83,13 @@ namespace YodaIM.Controllers
         }
 
         [HttpGet("mine")]
-        public async Task<UserFilesResponse> GetUserFiles()
+        public async Task<UserFilesResponse> GetUserFiles([FromQuery] DateTime? after)
         {
             var user = await userManager.GetUserAsyncOrFail(User);
 
             return new UserFilesResponse
             {
-                Files = await _fileService.GetUserFiles(user)
+                Files = await _fileService.GetUserFiles(user, after)
             };
         }
 

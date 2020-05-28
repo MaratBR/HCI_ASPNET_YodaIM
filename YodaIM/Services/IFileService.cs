@@ -18,6 +18,6 @@ namespace YodaIM.Services
 
         Task<ICollection<FileModel>> GetAll(ICollection<Guid> ids);
 
-        Task<List<FileModel>> GetUserFiles(User user);
+        Task<List<FileModel>> GetUserFiles(User user, DateTime? after);
     }
 }
